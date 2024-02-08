@@ -1,4 +1,4 @@
-module ratelimiter
+module github.com/deep-quality-dev/ratelimiter
 
 go 1.21.5
 
