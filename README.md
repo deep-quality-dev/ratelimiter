@@ -15,15 +15,15 @@ The Token Bucket Algorithm works as follows:
 
 ## Usage
 
-Import the TokenBucket package into your code:
+Import the `ratelimiter` package into your code:
 
 ```go
-import "github.com/yourusername/tokenbucket"
+import "github.com/deep-quality-dev/ratelimiter"
 ```
 
 Create a TokenBucket with the desired parameters:
 ```go
-tb := tokenbucket.NewTokenBucket(capacity, refillAmount, refillInterval)
+tb := ratelimiter.NewTokenBucket(capacity, refillAmount, refillInterval)
 ```
 
 Use the ConsumeTokens method to check and consume tokens:

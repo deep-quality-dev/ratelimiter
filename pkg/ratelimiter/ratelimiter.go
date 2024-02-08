@@ -1,6 +1,7 @@
-package main
+package ratelimiter
 
 import (
+	"fmt"
 	"sync"
 	"time"
 )
@@ -21,32 +22,41 @@ type TokenBucket struct {
 }
 
 // NewTokenBucket creates a new TokenBucket with the specific parameters
-func NewTokenBucket(maxTokens, refillAmount int, refillInterval time.Duration) *TokenBucket {
-	// todo, error
+func NewTokenBucket(maxTokens, refillAmount int, refillInterval time.Duration) (*TokenBucket, error) {
+	if maxTokens < 0 {
+		return nil, fmt.Errorf("max tokens not valid")
+	}
+	if refillAmount < 0 {
+		return nil, fmt.Errorf("refill amount not valid")
+	}
 	return &TokenBucket{
 		tokens:         maxTokens,
 		maxTokens:      maxTokens,
 		refillAmount:   refillAmount,
 		refillInterval: refillInterval,
 		lastUpdate:     time.Now(),
-	}
+	}, nil
 }
 
 // ConsumeTokens tries to consume the specific amount of tokens and
 // return true if consumed successfully
 func (tb *TokenBucket) ConsumeTokens(tokens int) bool {
+	if tokens <= 0 {
+		return false
+	}
 	tb.mu.Lock()
 	defer tb.mu.Unlock()
 
 	// Refill tokens
 	now := time.Now()
-	tb.tokens += int(now.Sub(tb.lastUpdate) / tb.refillInterval * time.Duration(tb.refillAmount))
+	refillTokens := int(now.Sub(tb.lastUpdate)/tb.refillInterval) * tb.refillAmount
+	if refillTokens > 0 {
+		tb.tokens += refillTokens
+		tb.lastUpdate = now
+	}
+
 	if tb.tokens > tb.maxTokens {
 		tb.tokens = tb.maxTokens
-	}
-	tb.lastUpdate = tb.lastUpdate.Add(tb.refillInterval)
-	if tb.lastUpdate.Compare(now) > 0 {
-		tb.lastUpdate = now
 	}
 
 	// Check if enough tokens are available to consume

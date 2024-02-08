@@ -3,17 +3,19 @@ package main
 import (
 	"fmt"
 	"time"
+
+	"github.com/deep-quality-dev/ratelimiter/pkg/ratelimiter"
 )
 
 func main() {
 	// Example usage for a user sending one message per second
-	userRateLimiter := NewTokenBucket(1, 1, time.Second)
+	userRateLimiter, _ := ratelimiter.NewTokenBucket(1, 1, time.Second)
 
 	// Example usage for a user with three allowed failed credit card transactions per day
-	userCreditCardLimiter := NewTokenBucket(3, 3, 24*time.Hour)
+	userCreditCardLimiter, _ := ratelimiter.NewTokenBucket(3, 3, 24*time.Hour)
 
 	// Example usage for a single IP creating twenty accounts per day
-	ipAccountLimiter := NewTokenBucket(20, 20, 24*time.Hour)
+	ipAccountLimiter, _ := ratelimiter.NewTokenBucket(20, 20, 24*time.Hour)
 
 	for i := 0; i < 21; i++ {
 		// User sending one message per second
