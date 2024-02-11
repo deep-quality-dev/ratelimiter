@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/deep-quality-dev/ratelimiter/pkg/ratelimiter"
+	"github.com/deep-quality-dev/ratelimiter"
 )
 
 func main() {
